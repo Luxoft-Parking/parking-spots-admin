@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button'
+import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,41 +11,39 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import InputBase from '@material-ui/core/InputBase';
+import ClearAllIcon from '@material-ui/icons/ClearAll';
+import IconButton from '@material-ui/core/IconButton';
+import AddUserForm from './AddUserForm';
 
-import AddUserForm from './AddUserForm'
+import api from '../../../utils/api';
 
-import api from '../../../utils/api'
-
-function createData({ fullName, username, isDriver, hasParkingSpot, reputation, isValidEmail, team }) {
-  return { fullName, username, isDriver, hasParkingSpot, reputation, isValidEmail, team };
+function desc(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
 }
 
+function stableSort(array, cmp) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
 
-// function desc(a, b, orderBy) {
-//   if (b[orderBy] < a[orderBy]) {
-//     return -1;
-//   }
-//   if (b[orderBy] > a[orderBy]) {
-//     return 1;
-//   }
-//   return 0;
-// }
+  stabilizedThis.sort((a, b) => {
+    const order = cmp(a[0], b[0]);
 
-// function stableSort(array, cmp) {
-//   const stabilizedThis = array.map((el, index) => [el, index]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = cmp(a[0], b[0]);
-//     if (order !== 0) return order;
-//     return a[1] - b[1];
-//   });
-//   return stabilizedThis.map(el => el[0]);
-// }
+    if (order !== 0) return order;
+    return a[1] - b[1];
+  });
 
-// function getSorting(order, orderBy) {
-//   return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-// }
+  return stabilizedThis.map(el => el[0]);
+}
+
+function getSorting(order, orderBy) {
+  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+}
 
 const headCells = [
   { id: 'fullName', numeric: false, label: 'Full Name' },
@@ -132,16 +130,28 @@ const useToolbarStyles = makeStyles(theme => ({
   actions: {
     color: theme.palette.text.secondary,
   },
+  filterContainer: {
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    width: 400,
+    marginLeft: theme.spacing(4)
+  },
   title: {
     flex: '0 0 auto',
+  }, input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
   },
 }));
-
 const EnhancedTableToolbar = props => {
   const classes = useToolbarStyles();
   // const { numSelected } = props;
   const [isAddUserOpen, setAddUserOpen] = React.useState(false);
-  console.log('isAddUserOpen: ', isAddUserOpen);
+  const [filterText, setFilterText] = React.useState('');
 
   return (
     <Toolbar
@@ -150,7 +160,26 @@ const EnhancedTableToolbar = props => {
       <Button color={'primary'} onClick={() => setAddUserOpen(true)}>{'Add'}</Button>
       <Button color={'primary'}>{'Edit'}</Button>
       <Button color={'secondary'}>{'Remove'}</Button>
-      <AddUserForm isOpen={isAddUserOpen} onFormClose={() => setAddUserOpen(false)} />
+      <Paper className={classes.filterContainer}>
+        <InputBase
+          className={classes.input}
+          placeholder="Filter List"
+          inputProps={{ 'aria-label': 'filter list' }}
+          value={filterText}
+          onChange={({ target: { value } }) => { setFilterText(value); props.filterUsers(value.toLowerCase()); }}
+        />
+        <IconButton className={classes.iconButton} aria-label="filter" onClick={() => { setFilterText(''); props.filterUsers(null); }}>
+          <ClearAllIcon />
+        </IconButton>
+      </Paper>
+      <AddUserForm
+        isOpen={isAddUserOpen}
+        onFormClose={() => setAddUserOpen(false)}
+        onUserAdded={(user) => {
+          setAddUserOpen(false);
+          props.onUserAdded(user);
+        }}
+      />
     </Toolbar>
   );
 };
@@ -190,21 +219,24 @@ const useStyles = makeStyles(theme => ({
 export default function EnhancedTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [orderBy, setOrderBy] = React.useState('fullName');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [rows, setRows] = React.useState([]);
+  const [filterText, setFilterText] = React.useState(null);
 
   React.useEffect(() => {
     api.listUsers().then(users => {
-      setRows(users.map(createData));
-    })
-  }, [])
+
+      setRows(users);
+    });
+  }, []);
 
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === 'desc';
+
     setOrder(isDesc ? 'asc' : 'desc');
     setOrderBy(property);
   }
@@ -212,6 +244,7 @@ export default function EnhancedTable() {
   function handleSelectAllClick(event) {
     if (event.target.checked) {
       const newSelecteds = rows.map(n => n.name);
+
       setSelected(newSelecteds);
       return;
     }
@@ -251,6 +284,16 @@ export default function EnhancedTable() {
     setDense(event.target.checked);
   }
 
+  function onUserAdded(user) {
+
+    setRows([user, ...rows]);
+  }
+
+  function filterUsers(filterText) {
+
+    setFilterText(filterText || null);
+  }
+
   // const isSelected = name => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -258,7 +301,7 @@ export default function EnhancedTable() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} onUserAdded={onUserAdded} filterUsers={filterUsers} />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -275,13 +318,15 @@ export default function EnhancedTable() {
               rowCount={rows.length}
             />
             <TableBody>
-              {rows
+              {stableSort(rows, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
+                .filter((row) => filterText ? row.username.toLowerCase().includes(filterText) || row.fullName.toLowerCase().includes(filterText) : true)
+                .map((row) => {
+
                   return (
                     <TableRow
                       hover
-                      key={row.username}
+                      key={row._id}
                     >
                       <TableCell>{row.fullName}</TableCell>
                       <TableCell>{row.username}</TableCell>

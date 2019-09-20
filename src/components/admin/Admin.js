@@ -43,8 +43,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
   },
 }));
-
-const MODULES = ["Users", "Parking", "Rotation"];
+const MODULES = ['Users', 'Parking', 'Rotation'];
 
 export default function Admin() {
   const classes = useStyles();
@@ -70,7 +69,7 @@ export default function Admin() {
               <TabPanel key={module} value={value} index={index}>
                 <Component />
               </TabPanel>
-            )
+            );
           }
         )
       }

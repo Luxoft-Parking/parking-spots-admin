@@ -43,7 +43,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-
 export default function SignIn(props) {
   const classes = useStyles();
   const [username, setUsername] = useState('');
@@ -51,19 +50,20 @@ export default function SignIn(props) {
   const [error, setError] = useState(false);
 
   if (auth.currentUser)
-    return <Redirect to={'/admin'} />
-  const inputHandlers = { username: setUsername, password: setPassword }
+    return <Redirect to={'/admin'} />;
+
+  const inputHandlers = { username: setUsername, password: setPassword };
 
   function onInputChange({ target: { name, value } }) {
-    setError(false)
+    setError(false);
     inputHandlers[name](value);
   }
 
   async function attemptLogin() {
-    setError(false)
+    setError(false);
     try {
       if (await auth.login(username, password)) {
-        props.history.push('/admin')
+        props.history.replace('/admin');
       } else {
         setError(true);
       }

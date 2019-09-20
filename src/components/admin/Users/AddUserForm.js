@@ -13,6 +13,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+
+import { createUser } from '../../../utils/api';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,24 +30,42 @@ const useStyles = makeStyles(theme => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  error: {
+    backgroundColor: '#f3555f',
+    textAlign: 'center',
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(1)
+  },
 }));
+
 export default function AddUserForm(props) {
   const classes = useStyles();
-
   const [open, setOpen] = React.useState(false);
   const [fullName, setFullName] = React.useState('');
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [isDriver, setDriver] = React.useState(true);
   const [team, setTeam] = React.useState('');
+  const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
     setOpen(props.isOpen);
-  }, [props.isOpen])
+  }, [props.isOpen]);
 
   function handleClose() {
     setOpen(false);
-    props.onFormClose()
+    props.onFormClose();
+  }
+
+  function onSuccess(user) {
+    props.onUserAdded(user);
+  }
+
+  function onError(error) {
+    if (error) {
+      console.error(error);
+    }
+    setError(true);
   }
 
   const handlers = {
@@ -52,12 +74,12 @@ export default function AddUserForm(props) {
     password: setPassword,
     driver: setDriver,
     team: setTeam,
-  }
+  };
 
   function handleChange({ target: { name, value, checked } }) {
-    console.log(`name, value, checked : ${name}, ${value}, ${checked}`);
+
     if (name === 'driver')
-      value = checked
+      value = checked;
     handlers[name](value);
   }
 
@@ -96,7 +118,7 @@ export default function AddUserForm(props) {
             margin="dense"
             id="password"
             name="password"
-            label="Email"
+            label="User's Password"
             type="text"
             fullWidth
             value={password}
@@ -136,12 +158,20 @@ export default function AddUserForm(props) {
             />}
             label="Is the user a Driver?"
           />
+          {
+            error &&
+            <Paper className={classes.error}>
+              <Typography component="h1" variant="h5" >
+                {'There was a problem creating the user.'}
+              </Typography>
+            </Paper>
+          }
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={createUser(fullName, username, password, team, isDriver, onSuccess, onError)} color="primary">
             Create User
           </Button>
         </DialogActions>
