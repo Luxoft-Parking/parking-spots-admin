@@ -23,27 +23,31 @@ export default function UserTableHeader(props) {
           />
         </TableCell>
  */}
-        {headCells.map(headCell => (
-          <TableCell
-            key={headCell.id}
-            align={'left'}
-            padding={'default'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={order}
-              onClick={createSortHandler(headCell.id)}
+        {
+          headCells.map(headCell => (
+            <TableCell
+              key={headCell.id}
+              align={'left'}
+              padding={'default'}
+              sortDirection={orderBy === headCell.id ? order : false}
             >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={order}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {
+                  orderBy === headCell.id ? (
+                    <span className={classes.visuallyHidden}>
+                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    </span>
+                  ) : null
+                }
+              </TableSortLabel>
+            </TableCell>
+          ))
+        }
       </TableRow>
     </TableHead>
   );

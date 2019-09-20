@@ -11,11 +11,22 @@ import NavBar from './components/shared/NavBar';
 function App() {
   return (
     <Router>
-      <Route path="/admin/:whatevs?" component={NavBar} />
-      <Route exact path="/" render={() => <Redirect to={`/${auth.currentUser ? 'admin' : 'login'}`} />} />
-      <Route path="/login" component={Login} />
-      <Route path="/logout" component={Logout} />
-      <Route path="/admin" component={Admin} />
+      <Route
+        component={NavBar}
+        path="/admin/:whatevs?" />
+      <Route
+        exact
+        path="/"
+        render={() => <Redirect to={`/${auth.currentUser ? 'admin' : 'login'}`} />} />
+      <Route
+        component={Login}
+        path="/login" />
+      <Route
+        component={Logout}
+        path="/logout" />
+      <Route
+        component={Admin}
+        path="/admin" />
     </Router>
   );
 }

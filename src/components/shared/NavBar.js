@@ -27,11 +27,19 @@ export default function NavBar(props) {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+          <IconButton
+            aria-label="menu"
+            className={classes.menuButton}
+            color="inherit"
+            edge="start">
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            <Button color="inherit" onClick={() => props.history.replace('/logout')}>Logout</Button>
+          <Typography
+            className={classes.title}
+            variant="h6">
+            <Button
+              color="inherit"
+              onClick={() => props.history.replace('/logout')}>Logout</Button>
           </Typography>
           <Button color="inherit">Login</Button>
         </Toolbar>

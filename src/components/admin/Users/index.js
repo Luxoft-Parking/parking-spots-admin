@@ -135,20 +135,24 @@ export default function EnhancedTable() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <UserTableToolbar onUserAdded={onUserAdded} onUserEdited={onUserEdited} filterUsers={filterUsers} selectedUser={selected} />
+        <UserTableToolbar
+          filterUsers={filterUsers}
+          selectedUser={selected}
+          onUserAdded={onUserAdded}
+          onUserEdited={onUserEdited} />
         <div className={classes.tableWrapper}>
           <Table
-            className={classes.table}
             aria-labelledby="tableTitle"
+            className={classes.table}
             size={'small'}
           >
             <UserTableHeader
               classes={classes}
+              headCells={tableRows}
               order={order}
               orderBy={orderBy}
-              onRequestSort={handleRequestSort}
               rowCount={rows.length}
-              headCells={tableRows}
+              onRequestSort={handleRequestSort}
             />
             <TableBody>
               {
@@ -158,12 +162,12 @@ export default function EnhancedTable() {
 
                     return (
                       <TableRow
-                        hover
                         key={row._id}
-                        onClick={() => handleClick(row)}
-                        role="checkbox"
+                        hover
                         aria-checked={isSelected(row)}
+                        role="checkbox"
                         selected={isSelected(row)}
+                        onClick={() => handleClick(row)}
                       >
                         <TableCell>{row.fullName}</TableCell>
                         <TableCell>{row.username}</TableCell>
@@ -174,27 +178,30 @@ export default function EnhancedTable() {
                         <TableCell>{row.isValidEmail ? 'Y' : 'N'}</TableCell>
                       </TableRow>
                     );
-                  })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 30 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
+                  })
+              }
+              {
+                emptyRows > 0 && (
+                  <TableRow style={{ height: 30 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )
+              }
             </TableBody>
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredRows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
           backIconButtonProps={{
             'aria-label': 'previous page',
           }}
+          component="div"
+          count={filteredRows.length}
           nextIconButtonProps={{
             'aria-label': 'next page',
           }}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />

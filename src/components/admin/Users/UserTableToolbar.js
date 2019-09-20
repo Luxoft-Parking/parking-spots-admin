@@ -57,23 +57,34 @@ export default function UserTableToolbar(props) {
 
   return (
     <Toolbar className={classes.root} >
-      <Button color={'primary'} onClick={() => setAddUserOpen(true)}>{'Add'}</Button>
-      <Button color={'primary'} onClick={() => setAddUserOpen(true)} disabled={!selectedUser}>{'Edit'}</Button>
-      <Button color={'secondary'} disabled={!selectedUser}>{'Remove'}</Button>
+      <Button
+        color={'primary'}
+        onClick={() => setAddUserOpen(true)}>{'Add'}</Button>
+      <Button
+        color={'primary'}
+        disabled={!selectedUser}
+        onClick={() => setAddUserOpen(true)}>{'Edit'}</Button>
+      <Button
+        color={'secondary'}
+        disabled={!selectedUser}>{'Remove'}</Button>
       <Paper className={classes.filterContainer}>
         <InputBase
           className={classes.input}
-          placeholder="Filter List"
           inputProps={{ 'aria-label': 'filter list' }}
+          placeholder="Filter List"
           value={filterText}
           onChange={({ target: { value } }) => { setFilterText(value); props.filterUsers(value.toLowerCase()); }}
         />
-        <IconButton className={classes.iconButton} aria-label="filter" onClick={() => { setFilterText(''); props.filterUsers(null); }}>
+        <IconButton
+          aria-label="filter"
+          className={classes.iconButton}
+          onClick={() => { setFilterText(''); props.filterUsers(null); }}>
           <ClearAllIcon />
         </IconButton>
       </Paper>
       <UserDataForm
         isOpen={isAddUserOpen}
+        user={selectedUser}
         onFormClose={() => setAddUserOpen(false)}
         onUserAdded={(user) => {
           setAddUserOpen(false);
@@ -83,7 +94,6 @@ export default function UserTableToolbar(props) {
           setAddUserOpen(false);
           props.onUserEdited(user);
         }}
-        user={selectedUser}
       />
     </Toolbar>
   );

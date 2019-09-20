@@ -12,11 +12,11 @@ function TabPanel(props) {
 
   return (
     <Typography
+      aria-labelledby={`simple-tab-${index}`}
       component="div"
-      role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
+      role="tabpanel"
       {...other}
     >
       <Box p={3}>{children}</Box>
@@ -56,8 +56,19 @@ export default function Admin() {
   return (
     <div className={classes.root}>
       <AppBar position="static">
-        <Tabs centered value={value} onChange={handleChange} aria-label="simple tabs example">
-          {MODULES.map((title, index) => (<Tab key={title} label={title} {...a11yProps(index)} />))}
+        <Tabs
+          centered
+          aria-label="simple tabs example"
+          value={value}
+          onChange={handleChange}>
+          {
+            MODULES.map((title, index) => (
+              <Tab
+                key={title}
+                label={title}
+                {...a11yProps(index)} />
+            ))
+          }
         </Tabs>
       </AppBar>
       {
@@ -66,7 +77,10 @@ export default function Admin() {
             const Component = require(`./${module}`).default;
 
             return (
-              <TabPanel key={module} value={value} index={index}>
+              <TabPanel
+                key={module}
+                index={index}
+                value={value}>
                 <Component />
               </TabPanel>
             );

@@ -74,46 +74,52 @@ export default function Login(props) {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container
+      component="main"
+      maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
+        <Typography
+          component="h1"
+          variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          noValidate
+          className={classes.form}>
           <TextField
-            variant="outlined"
-            margin="normal"
-            required
+            autoFocus
             fullWidth
+            required
+            autoComplete="email"
             id="username"
             label="Email Address"
+            margin="normal"
             name="username"
-            autoComplete="email"
-            autoFocus
+            variant="outlined"
             onChange={onInputChange}
           />
           <TextField
-            variant="outlined"
-            margin="normal"
-            required
             fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
+            required
             autoComplete="current-password"
+            id="password"
+            label="Password"
+            margin="normal"
+            name="password"
+            type="password"
+            variant="outlined"
             onChange={onInputChange}
           />
           <Button
-            type="button"
             fullWidth
-            variant="contained"
-            color="primary"
             className={classes.submit}
+            color="primary"
+            type="button"
+            variant="contained"
             onClick={attemptLogin}
           >
             {'Sign In'}
@@ -121,12 +127,15 @@ export default function Login(props) {
         </form>
       </div>
       {
-        error &&
-        <Paper className={classes.error}>
-          <Typography component="h1" variant="h5" >
-            {'There was a problem trying to login.'}<br />{'Check your credentials '}
-          </Typography>
-        </Paper>
+        error && (
+          <Paper className={classes.error}>
+            <Typography
+              component="h1"
+              variant="h5" >
+              {'There was a problem trying to login.'}<br />{'Check your credentials '}
+            </Typography>
+          </Paper>
+        )
       }
     </Container>
   );

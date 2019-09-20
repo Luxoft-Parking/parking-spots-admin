@@ -104,7 +104,10 @@ export default function AddUserForm(props) {
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog
+        aria-labelledby="form-dialog-title"
+        open={open}
+        onClose={handleClose}>
         <DialogTitle id="form-dialog-title">{`${user ? 'Edit' : 'Add'} User`}</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -112,46 +115,48 @@ export default function AddUserForm(props) {
           </DialogContentText>
           <TextField
             autoFocus
-            margin="dense"
-            id="fullName"
-            name="fullName"
-            label="Full Name"
-            type="text"
             fullWidth
+            id="fullName"
+            label="Full Name"
+            margin="dense"
+            name="fullName"
+            type="text"
             value={fullName}
             onChange={handleChange}
           />
           <TextField
             autoFocus
-            margin="dense"
-            id="username"
-            name="username"
-            label="Email"
-            type="email"
             fullWidth
+            id="username"
+            label="Email"
+            margin="dense"
+            name="username"
+            type="email"
             value={username}
             onChange={handleChange}
           />
           <TextField
             autoFocus
-            margin="dense"
-            id="password"
-            name="password"
-            label="User's Password"
-            type="text"
             fullWidth
+            id="password"
+            label="User's Password"
+            margin="dense"
+            name="password"
+            type="text"
             value={password}
             onChange={handleChange}
           />
-          <FormControl className={classes.formControl} fullWidth>
+          <FormControl
+            fullWidth
+            className={classes.formControl}>
             <InputLabel htmlFor="team">Team</InputLabel>
             <Select
-              value={team}
-              onChange={handleChange}
               inputProps={{
                 name: 'team',
                 id: 'team',
               }}
+              value={team}
+              onChange={handleChange}
             >
               <MenuItem value={'AMI'}>AMI</MenuItem>
               <MenuItem value={'Avaya'}>Avaya</MenuItem>
@@ -170,27 +175,36 @@ export default function AddUserForm(props) {
             </Select>
           </FormControl>
           <FormControlLabel
-            control={<Switch
-              checked={isDriver}
-              onChange={handleChange}
-              inputProps={{ name: 'driver' }}
-            />}
+            control={(
+              <Switch
+                checked={isDriver}
+                inputProps={{ name: 'driver' }}
+                onChange={handleChange}
+              />
+            )}
             label="Is the user a Driver?"
           />
           {
-            error &&
-            <Paper className={classes.error}>
-              <Typography component="h1" variant="h5" >
-                {'There was a problem creating the user.'}
-              </Typography>
-            </Paper>
+            error && (
+              <Paper className={classes.error}>
+                <Typography
+                  component="h1"
+                  variant="h5" >
+                  {'There was a problem creating the user.'}
+                </Typography>
+              </Paper>
+            )
           }
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button
+            color="primary"
+            onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={createOrEditUser(userId, fullName, username, password, team, isDriver, onSuccess, onError)} color="primary">
+          <Button
+            color="primary"
+            onClick={createOrEditUser(userId, fullName, username, password, team, isDriver, onSuccess, onError)}>
             {`${user ? 'Edit' : 'Create'} User`}
           </Button>
         </DialogActions>
