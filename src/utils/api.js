@@ -24,7 +24,33 @@ export const listUsers = async () => {
 
 };
 
-export const createUser = (fullName, username, password, team, isDriver, onSuccess, onError) => async () => {
+export const createOrEditUser = (userId, fullName, username, password, team, isDriver, onSuccess, onError) => async () => {
+  if (userId) {
+    return editUser(userId, fullName, username, password, team, isDriver, onSuccess, onError);
+  } else {
+    return createUser(fullName, username, password, team, isDriver, onSuccess, onError);
+  }
+};
+
+const editUser = async (userId, fullName, username, password, team, isDriver, onSuccess, onError) => {
+  try {
+    const response = await fetch(`http://localhost:3000/v1/user/${userId}`, {
+      ...requestOptions,
+      method: 'PUT',
+      body: JSON.stringify({ fullName, username, password, team, isDriver })
+    });
+
+    if (response.ok) {
+      onSuccess(await response.json());
+    } else {
+      onError(await response.json());
+    }
+
+  } catch (error) {
+    onError(error);
+  }
+};
+const createUser = async (fullName, username, password, team, isDriver, onSuccess, onError) => {
   try {
     const response = await fetch('http://localhost:3000/v1/user', {
       ...requestOptions,
@@ -45,5 +71,5 @@ export const createUser = (fullName, username, password, team, isDriver, onSucce
 
 export default {
   listUsers,
-  createUser
+  createOrEditUser
 };

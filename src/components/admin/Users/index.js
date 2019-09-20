@@ -81,7 +81,7 @@ export default function EnhancedTable() {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('fullName');
-  const [selected, setSelected] = React.useState([]);
+  const [selected, setSelected] = React.useState(null);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [rows, setRows] = React.useState([]);
@@ -101,35 +101,9 @@ export default function EnhancedTable() {
     setOrderBy(property);
   }
 
-  function handleSelectAllClick(event) {
-    if (event.target.checked) {
-      const newSelecteds = rows.map(n => n.name);
-
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
+  function handleClick(user) {
+    setSelected(user);
   }
-
-  // function handleClick(event, name) {
-  //   const selectedIndex = selected.indexOf(name);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // }
 
   function handleChangePage(event, newPage) {
     setPage(newPage);
@@ -144,19 +118,24 @@ export default function EnhancedTable() {
     setRows([user, ...rows]);
   }
 
+  function onUserEdited(user) {
+    Object.assign(selected, user);
+    setSelected(null);
+  }
+
   function filterUsers(filterText) {
 
     setFilterText(filterText || null);
   }
 
-  // const isSelected = name => selected.indexOf(name) !== -1;
-
+  const isSelected = row => selected && selected._id === row._id;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  const filteredRows = !filterText ? rows : rows.filter((row) => row.username.toLowerCase().includes(filterText) || row.fullName.toLowerCase().includes(filterText));
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <UserTableToolbar numSelected={selected.length} onUserAdded={onUserAdded} filterUsers={filterUsers} />
+        <UserTableToolbar onUserAdded={onUserAdded} onUserEdited={onUserEdited} filterUsers={filterUsers} selectedUser={selected} />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
@@ -165,35 +144,37 @@ export default function EnhancedTable() {
           >
             <UserTableHeader
               classes={classes}
-              numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
               headCells={tableRows}
             />
             <TableBody>
-              {stableSort(rows, getSorting(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .filter((row) => filterText ? row.username.toLowerCase().includes(filterText) || row.fullName.toLowerCase().includes(filterText) : true)
-                .map((row) => {
+              {
+                stableSort(filteredRows, getSorting(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
 
-                  return (
-                    <TableRow
-                      hover
-                      key={row._id}
-                    >
-                      <TableCell>{row.fullName}</TableCell>
-                      <TableCell>{row.username}</TableCell>
-                      <TableCell>{row.team}</TableCell>
-                      <TableCell>{row.isDriver ? 'Y' : 'N'}</TableCell>
-                      <TableCell>{row.hasParkingSpot ? 'Y' : 'N'}</TableCell>
-                      <TableCell>{row.reputation}</TableCell>
-                      <TableCell>{row.isValidEmail ? 'Y' : 'N'}</TableCell>
-                    </TableRow>
-                  );
-                })}
+                    return (
+                      <TableRow
+                        hover
+                        key={row._id}
+                        onClick={() => handleClick(row)}
+                        role="checkbox"
+                        aria-checked={isSelected(row)}
+                        selected={isSelected(row)}
+                      >
+                        <TableCell>{row.fullName}</TableCell>
+                        <TableCell>{row.username}</TableCell>
+                        <TableCell>{row.team}</TableCell>
+                        <TableCell>{row.isDriver ? 'Y' : 'N'}</TableCell>
+                        <TableCell>{row.hasParkingSpot ? 'Y' : 'N'}</TableCell>
+                        <TableCell>{row.reputation}</TableCell>
+                        <TableCell>{row.isValidEmail ? 'Y' : 'N'}</TableCell>
+                      </TableRow>
+                    );
+                  })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 30 * emptyRows }}>
                   <TableCell colSpan={6} />
@@ -205,7 +186,7 @@ export default function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={filteredRows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           backIconButtonProps={{

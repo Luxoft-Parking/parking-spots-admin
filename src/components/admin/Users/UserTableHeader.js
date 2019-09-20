@@ -6,7 +6,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 export default function UserTableHeader(props) {
-  const { classes, order, orderBy, /* onSelectAllClick, numSelected, rowCount,  */onRequestSort, headCells } = props;
+  const { classes, order, orderBy, onRequestSort, headCells } = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
   };

@@ -8,7 +8,7 @@ import ClearAllIcon from '@material-ui/icons/ClearAll';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 
-import AddUserForm from './AddUserForm';
+import UserDataForm from './UserDataForm';
 
 const useToolbarStyles = makeStyles(theme => ({
   root: {
@@ -36,7 +36,7 @@ const useToolbarStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     width: 400,
-    marginLeft: theme.spacing(4)
+    margin: 'auto'
   },
   title: {
     flex: '0 0 auto',
@@ -51,17 +51,15 @@ const useToolbarStyles = makeStyles(theme => ({
 
 export default function UserTableToolbar(props) {
   const classes = useToolbarStyles();
-  // const { numSelected } = props;
+  const { selectedUser } = props;
   const [isAddUserOpen, setAddUserOpen] = React.useState(false);
   const [filterText, setFilterText] = React.useState('');
 
   return (
-    <Toolbar
-      className={classes.root}
-    >
+    <Toolbar className={classes.root} >
       <Button color={'primary'} onClick={() => setAddUserOpen(true)}>{'Add'}</Button>
-      <Button color={'primary'}>{'Edit'}</Button>
-      <Button color={'secondary'}>{'Remove'}</Button>
+      <Button color={'primary'} onClick={() => setAddUserOpen(true)} disabled={!selectedUser}>{'Edit'}</Button>
+      <Button color={'secondary'} disabled={!selectedUser}>{'Remove'}</Button>
       <Paper className={classes.filterContainer}>
         <InputBase
           className={classes.input}
@@ -74,13 +72,18 @@ export default function UserTableToolbar(props) {
           <ClearAllIcon />
         </IconButton>
       </Paper>
-      <AddUserForm
+      <UserDataForm
         isOpen={isAddUserOpen}
         onFormClose={() => setAddUserOpen(false)}
         onUserAdded={(user) => {
           setAddUserOpen(false);
           props.onUserAdded(user);
         }}
+        onUserEdited={(user) => {
+          setAddUserOpen(false);
+          props.onUserEdited(user);
+        }}
+        user={selectedUser}
       />
     </Toolbar>
   );
@@ -90,4 +93,8 @@ UserTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
   filterUsers: PropTypes.func.isRequired,
   onUserAdded: PropTypes.func.isRequired,
+  onUserEdited: PropTypes.func.isRequired,
+  selectedUser: PropTypes.shape({
+
+  }),
 };

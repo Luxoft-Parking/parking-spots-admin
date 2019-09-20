@@ -18,7 +18,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-import { createUser } from '../../../utils/api';
+import { createOrEditUser } from '../../../utils/api';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,19 +48,36 @@ export default function AddUserForm(props) {
   const [password, setPassword] = React.useState('');
   const [isDriver, setDriver] = React.useState(true);
   const [team, setTeam] = React.useState('');
+  const [userId, setUserId] = React.useState(null);
   const [error, setError] = React.useState(false);
+  const { user } = props;
 
   React.useEffect(() => {
     setOpen(props.isOpen);
   }, [props.isOpen]);
+
+  React.useEffect(() => {
+    if (user) {
+      setFullName(user.fullName);
+      setUsername(user.username);
+      setPassword(user.password);
+      setDriver(user.isDriver);
+      setTeam(user.team);
+      setUserId(user._id);
+    }
+  }, [props.user]);
 
   function handleClose() {
     setOpen(false);
     props.onFormClose();
   }
 
-  function onSuccess(user) {
-    props.onUserAdded(user);
+  function onSuccess(userResponse) {
+    if (user) {
+      props.onUserEdited(userResponse);
+    } else {
+      props.onUserAdded(userResponse);
+    }
   }
 
   function onError(error) {
@@ -88,10 +105,10 @@ export default function AddUserForm(props) {
   return (
     <div>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Add User</DialogTitle>
+        <DialogTitle id="form-dialog-title">{`${user ? 'Edit' : 'Add'} User`}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            New User data
+            {`${user ? '' : 'New'} User data`}
           </DialogContentText>
           <TextField
             autoFocus
@@ -127,13 +144,13 @@ export default function AddUserForm(props) {
             onChange={handleChange}
           />
           <FormControl className={classes.formControl} fullWidth>
-            <InputLabel htmlFor="age-simple">Team</InputLabel>
+            <InputLabel htmlFor="team">Team</InputLabel>
             <Select
               value={team}
               onChange={handleChange}
               inputProps={{
                 name: 'team',
-                id: 'age-simple',
+                id: 'team',
               }}
             >
               <MenuItem value={'AMI'}>AMI</MenuItem>
@@ -173,8 +190,8 @@ export default function AddUserForm(props) {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={createUser(fullName, username, password, team, isDriver, onSuccess, onError)} color="primary">
-            Create User
+          <Button onClick={createOrEditUser(userId, fullName, username, password, team, isDriver, onSuccess, onError)} color="primary">
+            {`${user ? 'Edit' : 'Create'} User`}
           </Button>
         </DialogActions>
       </Dialog>
@@ -186,4 +203,13 @@ AddUserForm.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onFormClose: PropTypes.func.isRequired,
   onUserAdded: PropTypes.func.isRequired,
+  onUserEdited: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    fullName: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    team: PropTypes.string.isRequired,
+    isDriver: PropTypes.bool.isRequired,
+    _id: PropTypes.string.isRequired,
+  }),
 };
