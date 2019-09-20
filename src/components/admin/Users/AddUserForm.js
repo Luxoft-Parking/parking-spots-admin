@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -179,3 +181,9 @@ export default function AddUserForm(props) {
     </div>
   );
 }
+
+AddUserForm.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onFormClose: PropTypes.func.isRequired,
+  onUserAdded: PropTypes.func.isRequired,
+};

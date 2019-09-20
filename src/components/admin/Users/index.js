@@ -1,22 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { lighten, makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
+import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
-import IconButton from '@material-ui/core/IconButton';
-import AddUserForm from './AddUserForm';
+
+import UserTableHeader from './UserTableHeader';
+import UserTableToolbar from './UserTableToolbar';
 
 import api from '../../../utils/api';
+
+const tableRows = [
+  { id: 'fullName', numeric: false, label: 'Full Name' },
+  { id: 'username', numeric: false, label: 'Email' },
+  { id: 'team', numeric: false, label: 'Team' },
+  { id: 'isDriver', numeric: false, label: 'Driver' },
+  { id: 'hasParkingSpot', numeric: false, label: 'Has Spot Assigned?' },
+  { id: 'reputation', numeric: true, label: 'Reputation' },
+  { id: 'isValidEmail', numeric: true, label: 'Validated Email' },
+];
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -44,149 +48,6 @@ function stableSort(array, cmp) {
 function getSorting(order, orderBy) {
   return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
-
-const headCells = [
-  { id: 'fullName', numeric: false, label: 'Full Name' },
-  { id: 'username', numeric: false, label: 'Email' },
-  { id: 'team', numeric: false, label: 'Team' },
-  { id: 'isDriver', numeric: false, label: 'Driver' },
-  { id: 'hasParkingSpot', numeric: false, label: 'Has Spot Assigned?' },
-  { id: 'reputation', numeric: true, label: 'Reputation' },
-  { id: 'isValidEmail', numeric: true, label: 'Validated Email' },
-];
-
-function EnhancedTableHead(props) {
-  const { classes, order, orderBy, /* onSelectAllClick, numSelected, rowCount,  */onRequestSort } = props;
-  const createSortHandler = property => event => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        {/*         <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all desserts' }}
-          />
-        </TableCell>
- */}
-        {headCells.map(headCell => (
-          <TableCell
-            key={headCell.id}
-            align={'left'}
-            padding={'default'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={order}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
-const useToolbarStyles = makeStyles(theme => ({
-  root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1),
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-        color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-      }
-      : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark,
-      },
-  spacer: {
-    flex: '1 1 100%',
-  },
-  actions: {
-    color: theme.palette.text.secondary,
-  },
-  filterContainer: {
-    padding: '2px 4px',
-    display: 'flex',
-    alignItems: 'center',
-    width: 400,
-    marginLeft: theme.spacing(4)
-  },
-  title: {
-    flex: '0 0 auto',
-  }, input: {
-    marginLeft: theme.spacing(1),
-    flex: 1,
-  },
-  iconButton: {
-    padding: 10,
-  },
-}));
-const EnhancedTableToolbar = props => {
-  const classes = useToolbarStyles();
-  // const { numSelected } = props;
-  const [isAddUserOpen, setAddUserOpen] = React.useState(false);
-  const [filterText, setFilterText] = React.useState('');
-
-  return (
-    <Toolbar
-      className={classes.root}
-    >
-      <Button color={'primary'} onClick={() => setAddUserOpen(true)}>{'Add'}</Button>
-      <Button color={'primary'}>{'Edit'}</Button>
-      <Button color={'secondary'}>{'Remove'}</Button>
-      <Paper className={classes.filterContainer}>
-        <InputBase
-          className={classes.input}
-          placeholder="Filter List"
-          inputProps={{ 'aria-label': 'filter list' }}
-          value={filterText}
-          onChange={({ target: { value } }) => { setFilterText(value); props.filterUsers(value.toLowerCase()); }}
-        />
-        <IconButton className={classes.iconButton} aria-label="filter" onClick={() => { setFilterText(''); props.filterUsers(null); }}>
-          <ClearAllIcon />
-        </IconButton>
-      </Paper>
-      <AddUserForm
-        isOpen={isAddUserOpen}
-        onFormClose={() => setAddUserOpen(false)}
-        onUserAdded={(user) => {
-          setAddUserOpen(false);
-          props.onUserAdded(user);
-        }}
-      />
-    </Toolbar>
-  );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -222,7 +83,6 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState('fullName');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(true);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [rows, setRows] = React.useState([]);
   const [filterText, setFilterText] = React.useState(null);
@@ -280,12 +140,7 @@ export default function EnhancedTable() {
     setPage(0);
   }
 
-  function handleChangeDense(event) {
-    setDense(event.target.checked);
-  }
-
   function onUserAdded(user) {
-
     setRows([user, ...rows]);
   }
 
@@ -301,14 +156,14 @@ export default function EnhancedTable() {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} onUserAdded={onUserAdded} filterUsers={filterUsers} />
+        <UserTableToolbar numSelected={selected.length} onUserAdded={onUserAdded} filterUsers={filterUsers} />
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size={'small'}
           >
-            <EnhancedTableHead
+            <UserTableHeader
               classes={classes}
               numSelected={selected.length}
               order={order}
@@ -316,6 +171,7 @@ export default function EnhancedTable() {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
+              headCells={tableRows}
             />
             <TableBody>
               {stableSort(rows, getSorting(order, orderBy))

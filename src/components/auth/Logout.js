@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 
 import { logout } from '../../utils/authentication';
 
-function Logout(props) {
+function Logout() {
   logout();
   return (
     <Redirect to="/login" />
