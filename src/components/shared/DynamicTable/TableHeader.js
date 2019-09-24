@@ -14,15 +14,6 @@ export default function UserTableHeader(props) {
   return (
     <TableHead>
       <TableRow>
-        {/*         <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all desserts' }}
-          />
-        </TableCell>
- */}
         {
           headCells.map(headCell => (
             <TableCell
@@ -55,15 +46,13 @@ export default function UserTableHeader(props) {
 
 UserTableHeader.propTypes = {
   classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
+  order: PropTypes.oneOf(['asc', 'desc']),
+  orderBy: PropTypes.string,
   rowCount: PropTypes.number.isRequired,
   headCells: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
-    numeric: PropTypes.bool.isRequired,
+    type: PropTypes.oneOf(['string', 'boolean', 'number']).isRequired,
     label: PropTypes.string.isRequired,
   }).isRequired).isRequired,
 };

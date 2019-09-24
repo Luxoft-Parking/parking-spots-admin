@@ -40,9 +40,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AddUserForm(props) {
+export default function UserDataForm(props) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
   const [fullName, setFullName] = React.useState('');
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -53,10 +52,7 @@ export default function AddUserForm(props) {
   const { user } = props;
 
   React.useEffect(() => {
-    setOpen(props.isOpen);
-  }, [props.isOpen]);
 
-  React.useEffect(() => {
     if (user) {
       setFullName(user.fullName);
       setUsername(user.username);
@@ -64,11 +60,18 @@ export default function AddUserForm(props) {
       setDriver(user.isDriver);
       setTeam(user.team);
       setUserId(user._id);
+    } else {
+      setFullName('');
+      setUsername('');
+      setPassword('');
+      setDriver(false);
+      setTeam('AMI');
+      setUserId(null);
+
     }
-  }, [props.user]);
+  }, [user]);
 
   function handleClose() {
-    setOpen(false);
     props.onFormClose();
   }
 
@@ -106,7 +109,7 @@ export default function AddUserForm(props) {
     <div>
       <Dialog
         aria-labelledby="form-dialog-title"
-        open={open}
+        open={props.isOpen}
         onClose={handleClose}>
         <DialogTitle id="form-dialog-title">{`${user ? 'Edit' : 'Add'} User`}</DialogTitle>
         <DialogContent>
@@ -213,7 +216,7 @@ export default function AddUserForm(props) {
   );
 }
 
-AddUserForm.propTypes = {
+UserDataForm.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onFormClose: PropTypes.func.isRequired,
   onUserAdded: PropTypes.func.isRequired,
@@ -221,7 +224,7 @@ AddUserForm.propTypes = {
   user: PropTypes.shape({
     fullName: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired,
+    password: PropTypes.string,
     team: PropTypes.string.isRequired,
     isDriver: PropTypes.bool.isRequired,
     _id: PropTypes.string.isRequired,

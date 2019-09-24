@@ -8,8 +8,6 @@ import ClearAllIcon from '@material-ui/icons/ClearAll';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 
-import UserDataForm from './UserDataForm';
-
 const useToolbarStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
@@ -51,22 +49,21 @@ const useToolbarStyles = makeStyles(theme => ({
 
 export default function UserTableToolbar(props) {
   const classes = useToolbarStyles();
-  const { selectedUser } = props;
-  const [isAddUserOpen, setAddUserOpen] = React.useState(false);
   const [filterText, setFilterText] = React.useState('');
 
   return (
     <Toolbar className={classes.root} >
       <Button
         color={'primary'}
-        onClick={() => setAddUserOpen(true)}>{'Add'}</Button>
+        onClick={() => props.onAddRowClicked()}>{'Add'}</Button>
       <Button
         color={'primary'}
-        disabled={!selectedUser}
-        onClick={() => setAddUserOpen(true)}>{'Edit'}</Button>
+        disabled={!props.selectedRow}
+        onClick={() => props.onEditRowClicked()}>{'Edit'}</Button>
       <Button
         color={'secondary'}
-        disabled={!selectedUser}>{'Remove'}</Button>
+        disabled={!props.selectedRow}
+        onClick={() => props.onDeleteRowClicked()}>{'Remove'}</Button>
       <Paper className={classes.filterContainer}>
         <InputBase
           className={classes.input}
@@ -82,29 +79,15 @@ export default function UserTableToolbar(props) {
           <ClearAllIcon />
         </IconButton>
       </Paper>
-      <UserDataForm
-        isOpen={isAddUserOpen}
-        user={selectedUser}
-        onFormClose={() => setAddUserOpen(false)}
-        onUserAdded={(user) => {
-          setAddUserOpen(false);
-          props.onUserAdded(user);
-        }}
-        onUserEdited={(user) => {
-          setAddUserOpen(false);
-          props.onUserEdited(user);
-        }}
-      />
     </Toolbar>
   );
 }
 
 UserTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
   filterUsers: PropTypes.func.isRequired,
-  onUserAdded: PropTypes.func.isRequired,
-  onUserEdited: PropTypes.func.isRequired,
-  selectedUser: PropTypes.shape({
+  onAddRowClicked: PropTypes.func.isRequired,
+  onEditRowClicked: PropTypes.func.isRequired,
+  selectedRow: PropTypes.shape({
 
   }),
 };
