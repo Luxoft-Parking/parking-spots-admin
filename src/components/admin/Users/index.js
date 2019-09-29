@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import api from '../../../utils/api';
 import DynamicTable from '../../shared/DynamicTable';
 import UserDataForm from './UserDataForm';
+import DeleteRecordModal from '../../shared/DeleteRecordModal';
 
 const tableColumns = [
   { id: 'fullName', type: 'string', label: 'Full Name' },
@@ -28,7 +29,25 @@ export default function UsersTable() {
   const [users, setUsers] = React.useState([]);
   const [selectedUser, setSelectedUser] = React.useState(null);
   const [isAddUserOpen, setAddUserOpen] = React.useState(false);
+  const [isDeleteOpen, setDeleteOpen] = React.useState(false);
+  const [deleteError, setDeleteError] = React.useState(false);
 
+  function deleteUser() {
+    api.deleteUser(selectedUser._id,
+      () => {
+        setDeleteOpen(false);
+        setDeleteError(false);
+        setUsers(users.filter(user => user._id !== selectedUser._id));
+      },
+      () => {
+        setDeleteError(true);
+      });
+  }
+
+  function closeDeleteModal() {
+    setDeleteOpen(false);
+    setDeleteError(false);
+  }
   function onUserAdded(user) {
     setUsers([user, ...users]);
   }
@@ -51,7 +70,7 @@ export default function UsersTable() {
         rows={users}
         selectedRow={selectedUser}
         onAddRowClicked={() => { setSelectedUser(null); setAddUserOpen(true); }}
-        onDeleteRowClicked={() => { }}
+        onDeleteRowClicked={() => { setDeleteOpen(true); }}
         onEditRowClicked={() => { setAddUserOpen(true); }}
         onSelectionChange={setSelectedUser}
       />
@@ -67,6 +86,12 @@ export default function UsersTable() {
           setAddUserOpen(false);
           onUserEdited(user);
         }}
+      />
+      <DeleteRecordModal
+        error={deleteError}
+        isOpen={isDeleteOpen}
+        onConfirmDelete={deleteUser}
+        onFormClose={closeDeleteModal}
       />
 
     </div>

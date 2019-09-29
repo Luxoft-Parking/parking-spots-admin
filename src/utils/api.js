@@ -127,9 +127,49 @@ const createSpot = async (level, number, onSuccess, onError) => {
   }
 };
 
+export const deleteUser = async (userId, onSuccess, onError) => {
+  try {
+    const response = await fetch(`http://localhost:3000/v1/user/${userId}`, {
+      ...requestOptions,
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      onSuccess();
+    } else {
+      onError(await response.json());
+    }
+
+  } catch (error) {
+    onError(error);
+  }
+
+};
+
+export const deleteSpot = async (spotId, onSuccess, onError) => {
+  try {
+    const response = await fetch(`http://localhost:3000/v1/spot/${spotId}`, {
+      ...requestOptions,
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      onSuccess();
+    } else {
+      onError(await response.json());
+    }
+
+  } catch (error) {
+    onError(error);
+  }
+
+};
+
 export default {
   listUsers,
   listSpots,
   createOrEditUser,
   createOrEditSpot,
+  deleteUser,
+  deleteSpot,
 };

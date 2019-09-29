@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import api from '../../../utils/api';
 import DynamicTable from '../../shared/DynamicTable';
 import SpotDataForm from './SpotDataForm';
+import DeleteRecordModal from '../../shared/DeleteRecordModal';
 
 const tableColumns = [
   { id: 'level', type: 'string', label: 'Level' },
@@ -23,6 +24,25 @@ export default function SpotsTable() {
   const [spots, setSpots] = React.useState([]);
   const [selectedSpot, setSelectedSpot] = React.useState(null);
   const [isAddSpotOpen, setAddSpotOpen] = React.useState(false);
+  const [isDeleteOpen, setDeleteOpen] = React.useState(false);
+  const [deleteError, setDeleteError] = React.useState(false);
+
+  function deleteSpot() {
+    api.deleteSpot(selectedSpot._id,
+      () => {
+        setDeleteOpen(false);
+        setDeleteError(false);
+        setSpots(spots.filter(spot => spot._id !== selectedSpot._id));
+      },
+      () => {
+        setDeleteError(true);
+      });
+  }
+
+  function closeDeleteModal() {
+    setDeleteOpen(false);
+    setDeleteError(false);
+  }
 
   function onSpotAdded(user) {
     setSpots([user, ...spots]);
@@ -49,7 +69,7 @@ export default function SpotsTable() {
           setSelectedSpot(null);
           setAddSpotOpen(true);
         }}
-        onDeleteRowClicked={() => { }}
+        onDeleteRowClicked={() => { setDeleteOpen(true); }}
         onEditRowClicked={() => { setAddSpotOpen(true); }}
         onSelectionChange={setSelectedSpot}
       />
@@ -67,6 +87,12 @@ export default function SpotsTable() {
         }}
       />
 
+      <DeleteRecordModal
+        error={deleteError}
+        isOpen={isDeleteOpen}
+        onConfirmDelete={deleteSpot}
+        onFormClose={closeDeleteModal}
+      />
     </div>
   );
 }

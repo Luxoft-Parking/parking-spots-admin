@@ -22,6 +22,7 @@
       "semi": ["error", "always"],
       "no-multiple-empty-lines": ["error", {"max": 1, "maxEOF": 0, "maxBOF": 0}],
       "no-console": ["warn", {"allow": ["warn", "error"]}],
+      "prefer-template": ["error"],
       "space-before-blocks": ["error", "always"],
       "padding-line-between-statements": [
         "error",
