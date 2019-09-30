@@ -51,7 +51,7 @@ export default function Login(props) {
   const [error, setError] = useState(false);
 
   if (auth.currentUser)
-    return <Redirect to={'/admin'} />;
+    return <Redirect to={'/admin/users'} />;
 
   const inputHandlers = { username: setUsername, password: setPassword };
 
@@ -64,7 +64,7 @@ export default function Login(props) {
     setError(false);
     try {
       if (await auth.login(username, password)) {
-        props.history.replace('/admin');
+        props.history.replace('/admin/users');
       } else {
         setError(true);
       }

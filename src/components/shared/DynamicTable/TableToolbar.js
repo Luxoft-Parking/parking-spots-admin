@@ -47,23 +47,35 @@ const useToolbarStyles = makeStyles(theme => ({
   },
 }));
 
-export default function UserTableToolbar(props) {
+export default function TableToolbar(props) {
   const classes = useToolbarStyles();
   const [filterText, setFilterText] = React.useState('');
 
   return (
     <Toolbar className={classes.root} >
-      <Button
-        color={'primary'}
-        onClick={() => props.onAddRowClicked()}>{'Add'}</Button>
-      <Button
-        color={'primary'}
-        disabled={!props.selectedRow}
-        onClick={() => props.onEditRowClicked()}>{'Edit'}</Button>
-      <Button
-        color={'secondary'}
-        disabled={!props.selectedRow}
-        onClick={() => props.onDeleteRowClicked()}>{'Remove'}</Button>
+      {props.onAddRowClicked && (
+        <Button
+          color={'primary'}
+          onClick={() => props.onAddRowClicked()}>{'Add'}</Button>
+      )}
+      {props.onEditRowClicked && (
+        <Button
+          color={'primary'}
+          disabled={!props.selectedRow}
+          onClick={() => props.onEditRowClicked()}>{'Edit'}</Button>
+      )}
+      {props.onAssignClicked && (
+        <Button
+          color={'primary'}
+          disabled={!props.selectedRow}
+          onClick={() => props.onAssignClicked()}>{'Assign'}</Button>
+      )}
+      {props.onDeleteRowClicked && (
+        <Button
+          color={'secondary'}
+          disabled={!props.selectedRow}
+          onClick={() => props.onDeleteRowClicked()}>{'Remove'}</Button>
+      )}
       <Paper className={classes.filterContainer}>
         <InputBase
           className={classes.input}
@@ -83,10 +95,12 @@ export default function UserTableToolbar(props) {
   );
 }
 
-UserTableToolbar.propTypes = {
+TableToolbar.propTypes = {
   filterUsers: PropTypes.func.isRequired,
-  onAddRowClicked: PropTypes.func.isRequired,
-  onEditRowClicked: PropTypes.func.isRequired,
+  onAddRowClicked: PropTypes.func,
+  onEditRowClicked: PropTypes.func,
+  onAssignClicked: PropTypes.func,
+  onDeleteRowClicked: PropTypes.func,
   selectedRow: PropTypes.shape({
 
   }),

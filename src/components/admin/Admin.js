@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const MODULES = ['Users', 'Parking', 'Rotation'];
 
-export default function Admin() {
+export default function Admin(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -66,7 +66,11 @@ export default function Admin() {
               <Tab
                 key={title}
                 label={title}
-                {...a11yProps(index)} />
+                {...a11yProps(index)}
+                onClick={() => {
+                  props.history.push(`/admin/${title.toLowerCase()}`);
+                }}
+              />
             ))
           }
         </Tabs>
@@ -90,3 +94,9 @@ export default function Admin() {
     </div>
   );
 }
+
+Admin.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};

@@ -5,7 +5,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
-export default function UserTableHeader(props) {
+export default function TableHeader(props) {
   const { classes, order, orderBy, onRequestSort, headCells } = props;
   const createSortHandler = property => event => {
     onRequestSort(event, property);
@@ -44,7 +44,7 @@ export default function UserTableHeader(props) {
   );
 }
 
-UserTableHeader.propTypes = {
+TableHeader.propTypes = {
   classes: PropTypes.object.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']),

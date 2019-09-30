@@ -3,21 +3,24 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import logo from './logo-white-new.svg';
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
   title: {
     flexGrow: 1,
   },
+  logo: {
+    height: 40,
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+  },
+  toolbar: {
+    justifyContent: 'space-between'
+  }
 }));
 
 export default function NavBar(props) {
@@ -26,22 +29,14 @@ export default function NavBar(props) {
   return (
     <div className={classes.root}>
       <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            aria-label="menu"
-            className={classes.menuButton}
+        <Toolbar className={classes.toolbar}>
+          <img
+            alt={'luxoft logo'}
+            className={classes.logo}
+            src={logo} />
+          <Button
             color="inherit"
-            edge="start">
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            className={classes.title}
-            variant="h6">
-            <Button
-              color="inherit"
-              onClick={() => props.history.replace('/logout')}>Logout</Button>
-          </Typography>
-          <Button color="inherit">Login</Button>
+            onClick={() => props.history.replace('/logout')}>Logout</Button>
         </Toolbar>
       </AppBar>
     </div>

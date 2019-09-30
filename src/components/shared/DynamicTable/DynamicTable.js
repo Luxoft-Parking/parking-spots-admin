@@ -14,10 +14,13 @@ import UserTableHeader from './TableHeader';
 import UserTableToolbar from './TableToolbar';
 
 function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
+  const valA = get(a, orderBy, '');
+  const valB = get(b, orderBy, '');
+
+  if (valB < valA) {
     return -1;
   }
-  if (b[orderBy] > a[orderBy]) {
+  if (valB > valA) {
     return 1;
   }
   return 0;
@@ -75,7 +78,7 @@ export default function DynamicTable(props) {
   const [orderBy, setOrderBy] = React.useState(null);
   const [selected, setSelected] = React.useState(null);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState([]);
   const [filterText, setFilterText] = React.useState(null);
   const [filterableColumns, setFilterableColumns] = React.useState([]);
@@ -116,6 +119,10 @@ export default function DynamicTable(props) {
     setFilterText(filterText || null);
   }
 
+  const onAddRowClicked = props.onAddRowClicked ? () => {
+    props.onSelectionChange(null);
+    props.onAddRowClicked();
+  } : null;
   const isSelected = row => selected && selected._id === row._id;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
   const filteredRows = !filterText ? rows : rows.filter((row) => filterableColumns.find(col => get(row, col.id, '').toLowerCase().includes(filterText)));
@@ -123,13 +130,26 @@ export default function DynamicTable(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
+        <TablePagination
+          backIconButtonProps={{
+            'aria-label': 'previous page',
+          }}
+          component="div"
+          count={filteredRows.length}
+          nextIconButtonProps={{
+            'aria-label': 'next page',
+          }}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 20]}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
         <UserTableToolbar
           filterUsers={filterUsers}
           selectedRow={selected}
-          onAddRowClicked={() => {
-            props.onSelectionChange(null);
-            props.onAddRowClicked();
-          }}
+          onAddRowClicked={onAddRowClicked}
+          onAssignClicked={props.onAssignClicked}
           onDeleteRowClicked={props.onDeleteRowClicked}
           onEditRowClicked={props.onEditRowClicked}
         />
@@ -192,7 +212,7 @@ export default function DynamicTable(props) {
           }}
           page={page}
           rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 20]}
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
@@ -217,4 +237,5 @@ DynamicTable.propTypes = {
   onDeleteRowClicked: PropTypes.func.isRequired,
   onEditRowClicked: PropTypes.func.isRequired,
   onSelectionChange: PropTypes.func.isRequired,
+  onAssignClicked: PropTypes.func.isRequired,
 };

@@ -165,11 +165,68 @@ export const deleteSpot = async (spotId, onSuccess, onError) => {
 
 };
 
+export const listFreeSpots = async (onSuccess, onError) => {
+  try {
+    const response = await fetch('http://localhost:3000/v1/spot/free', {
+      ...requestOptions,
+      method: 'GET'
+    });
+
+    if (response.ok) {
+      onSuccess(await response.json());
+    } else {
+      onError(await response.json());
+    }
+
+  } catch (error) {
+    onError(error);
+  }
+
+};
+
+export const assignSpotToUser = async (spotId, userId, onSuccess, onError) => {
+  try {
+    const response = await fetch(`http://localhost:3000/v1/user/${userId}/spot/${spotId}`, {
+      ...requestOptions,
+      method: 'PUT'
+    });
+
+    if (response.ok) {
+      onSuccess();
+    } else {
+      onError();
+    }
+
+  } catch (error) {
+    onError(error);
+  }
+};
+
+export const getUserInfo = async (userId, onSuccess, onError) => {
+  try {
+    const response = await fetch(`http://localhost:3000/v1/user/${userId}`, {
+      ...requestOptions,
+      method: 'GET'
+    });
+
+    if (response.ok) {
+      onSuccess(await response.json());
+    } else {
+      onError();
+    }
+
+  } catch (error) {
+    onError(error);
+  }
+};
 export default {
   listUsers,
   listSpots,
+  listFreeSpots,
+  getUserInfo,
   createOrEditUser,
   createOrEditSpot,
   deleteUser,
   deleteSpot,
+  assignSpotToUser,
 };
