@@ -219,6 +219,37 @@ export const getUserInfo = async (userId, onSuccess, onError) => {
     onError(error);
   }
 };
+
+export const getRotationPreview = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/v1/admin/rotation', {
+      ...requestOptions,
+      method: 'GET'
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+
+  } catch (error) {
+    console.error(error)
+  }
+}
+export const generateRotation = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/v1/admin/rotation', {
+      ...requestOptions,
+      method: 'POST'
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+
+  } catch (error) {
+    console.error(error)
+  }
+}
 export default {
   listUsers,
   listSpots,
@@ -229,4 +260,6 @@ export default {
   deleteUser,
   deleteSpot,
   assignSpotToUser,
+  getRotationPreview,
+  generateRotation,
 };

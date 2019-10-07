@@ -52,7 +52,13 @@
         "logical": "parens-new-line",
         "prop": "parens-new-line"
       }],
-      "react/jsx-curly-newline": ["error", {"multiline": "consistent", "singleline":  "forbid"}]
+      "react/jsx-curly-newline": ["error", {"multiline": "consistent", "singleline":  "forbid"}],
+      "react/jsx-tag-spacing": [{
+        "closingSlash": "never",
+        "beforeSelfClosing": "never",
+        "afterOpening": "never",
+        "beforeClosing": "never"
+      }]
     },
     "settings": {
       "react": {
